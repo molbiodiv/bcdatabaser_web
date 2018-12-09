@@ -1,6 +1,6 @@
 # metaDB Webinterface
 
-Web interface for executing the pipeline [metaDB] (https://github.com/molbiodiv/metabDB)
+Web interface for executing the pipeline [metaDB](https://github.com/molbiodiv/metabDB)
 
 ## Usage
 
