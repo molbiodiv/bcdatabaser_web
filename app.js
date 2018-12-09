@@ -14,13 +14,13 @@ var io = require('socket.io')(server);
 io.on('connection', function(socket){
   console.log('made socket connection', socket.id)
   socket.on('execute', function(data){
-    executeScript(socket);
+    executeScript(socket, data);
   })
 });
 
-var executeScript = function(socket){
+var executeScript = function(socket, data){
   var spawn = require('child_process').spawn;
-  var process = spawn('docker', [ 'run', '--rm', 'iimog/metabdb_dev', '--help' ]);
+  var process = spawn('docker', data.parameters);
   process.stdout.setEncoding('utf-8');
   process.stdout.on('data', function (data) {
       socket.emit('logs', {data: data});

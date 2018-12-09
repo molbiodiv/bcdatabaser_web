@@ -3,10 +3,14 @@
 $(function() {
   var socket = io.connect('http://127.0.0.1:3141');
 
+  var params = [ 'run', '--rm', 'iimog/metabdb_dev', '--help' ];
+
   //emit event
 
   $('button').click(function(){
-    socket.emit('execute');
+    socket.emit('execute', {
+      parameters: params
+    });
     $(this).attr('disabled', 'none');
   })
 
