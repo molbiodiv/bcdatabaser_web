@@ -1,0 +1,13 @@
+.container {
+  margin-top: 40px;
+  text-align: center;
+}
+.btn {
+  margin-bottom: 20px;
+}
+
+#messages {
+  font-family: "Lucida Console", Monaco, monospace;
+  list-style: none;
+  text-align: left;
+}
