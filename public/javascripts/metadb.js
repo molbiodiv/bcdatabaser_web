@@ -7,9 +7,7 @@ $(function() {
 
   $('button').click(function(){
     var markerSearchString = $('#markerSearchString').val();
-    var taxonomicRange = $('#taxonomicRange').val();
-    var params = [ 'run', '--rm', 'iimog/metabdb_dev', '--marker-search-string', markerSearchString, '--sequence-length-filter', '100:2000', 'taxonomic-range', taxonomicRange];
-    console.log(markerSearchString);
+    var params = [ 'run', '--rm', 'iimog/metabdb_dev', '--help'];
     socket.emit('execute', {
       parameters: params
     });
