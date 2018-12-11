@@ -5,6 +5,9 @@ LABEL maintainer="markus.ankenbrand@uni-wuerzburg.de"
 RUN apt-get update \
 && apt-get install -yq git unzip vim curl wget build-essential liblog-log4perl-perl libgetopt-argvfile-perl libdatetime-format-natural-perl ncbi-entrez-direct libbio-perl-perl \
 && rm -rf /var/lib/apt/lists/*
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN apt-get update \
+&& apt-get install -yq nodejs
 
 RUN git clone https://github.com/greatfireball/NCBI-Taxonomy
 RUN cd /NCBI-Taxonomy && perl Makefile.PL && make && perl make_taxid_indizes.pl
@@ -28,5 +31,6 @@ RUN ln -s /SeqFilter/bin/SeqFilter /usr/bin/SeqFilter
 
 COPY . /metabDB_web
 
-#WORKDIR /metaDB_web
-#ENTRYPOINT ["/bin/", "/metabDB_web/metaDB/bin/reference_db_creator.pl"]
+WORKDIR /metabDB_web
+EXPOSE 3000
+CMD ["npm", "start"]
