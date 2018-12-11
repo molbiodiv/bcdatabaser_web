@@ -26,7 +26,7 @@ RUN git clone https://github.com/BioInf-Wuerzburg/SeqFilter
 RUN cd /SeqFilter && make
 RUN ln -s /SeqFilter/bin/SeqFilter /usr/bin/SeqFilter
 
-COPY . /metabDB
+COPY . /metabDB_web
 
-WORKDIR /data
-ENTRYPOINT ["perl", "/metabDB/bin/reference_db_creator.pl"]
+#WORKDIR /metaDB_web
+#ENTRYPOINT ["/bin/", "/metabDB_web/metaDB/bin/reference_db_creator.pl"]
