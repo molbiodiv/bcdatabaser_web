@@ -8,6 +8,7 @@ var exec = require('child_process').exec;
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+//setup socket connection
 var app = express();
 var server = app.listen(3141);
 var io = require('socket.io')(server);

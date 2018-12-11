@@ -3,11 +3,11 @@
 $(function() {
   var socket = io.connect('http://127.0.0.1:3141');
 
-  var params = [ 'run', '--rm', 'iimog/metabdb_dev', '--help' ];
-
   //emit event
 
   $('button').click(function(){
+    var markerSearchString = $('#markerSearchString').val();
+    var params = [ 'run', '--rm', 'iimog/metabdb_dev', '--help'];
     socket.emit('execute', {
       parameters: params
     });
