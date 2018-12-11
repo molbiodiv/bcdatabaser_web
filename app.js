@@ -21,7 +21,7 @@ io.on('connection', function(socket){
 
 var executeScript = function(socket, data){
   var spawn = require('child_process').spawn;
-  var process = spawn('docker', data.parameters);
+  var process = spawn('perl', data.parameters);
   process.stdout.setEncoding('utf-8');
   process.stdout.on('data', function (data) {
       socket.emit('logs', {data: data});

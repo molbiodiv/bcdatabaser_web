@@ -7,7 +7,7 @@ $(function() {
 
   $('button').click(function(){
     var markerSearchString = $('#markerSearchString').val();
-    var params = [ 'run', '--rm', 'iimog/metabdb_dev', '--help'];
+    var params = [ 'metabDB/bin/reference_db_creator.pl', '--help'];
     socket.emit('execute', {
       parameters: params
     });
