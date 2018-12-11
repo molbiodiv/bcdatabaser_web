@@ -1,0 +1,3 @@
+[submodule "metabDB"]
+	path = metabDB
+	url = https://github.com/molbiodiv/metabDB.git
