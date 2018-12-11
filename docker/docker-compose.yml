@@ -1,0 +1,13 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm start
+    volumes:
+      - ..:/metabDB_web
+    working_dir: /metabDB_web
+    ports:
+      - "3000:3000"
+      - "3141:3141"
