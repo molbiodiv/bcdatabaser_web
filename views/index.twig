@@ -1,30 +1,66 @@
 {% extends 'layout.twig' %}
 
 {% block body %}
-  <div class="container">
+<div class="container">
+  <div class="row" style="margin-top: 50px;">
+    <div class="jumbotron">
+      <h1 class="display-3">Reference DB Creator</h1>
+      <p class="lead">
+        The Reference DB Creator is a pipeline to create reference databases for arbitrary markers and taxonomic groups from NCBI
+        data. It can optionally be used to trim and orient the sequences and train taxonomic classifiers.
+      </p>
+      <hr class="my-4">
+      <p>Some information how to use the pipeline</p>
+      <p class="lead">
+        <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+        <a class="btn btn-primary btn-lg" href="#" role="button"><i class="fa fa-github"></i></a>
+      </p>
+    </div>
+  </div>
+  <fieldset>
+    <legend>Search String</legend>
+    <div class="form-group">
+      <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Search String">
+    </div>
+    <legend>Taxonomic Range</legend>
+    <div class="form-group">
+      <select class="custom-select">
+        <option selected="">Open this select menu</option>
+        <option value="1">Bellis</option>
+        <option value="2">Viridiplantae</option>
+        <option value="3">...</option>
+      </select>
+    </div>
+    <legend>Taxa List</legend>
+    <div class="form-group">
+      <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
+      <small id="fileHelp" class="form-text text-muted">This is some placeholder block-level help text for the above input. It's a bit lighter and easily wraps to a new line.</small>
+    </div>
+    <legend>Sequence Length Filter</legend>
+    <div class="form-group">
+      <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Search String">
+    </div>
+  </fieldset>
+  <!-- <div class="row">
+    <div class="form-group">
+      <label for="markerSearchString">marker-search-string</label>
+      <input type="text" class="form-control" id="markerSearchString" placeholder="marker search string">
+    </div>
+  </div>
   <div class="row">
-    <h1 class="page-header">MetaDB</h1>
-  </div>
-      <div class="row">
-        <div class="form-group">
-          <label for="markerSearchString">marker-search-string</label>
-          <input type="text" class="form-control" id="markerSearchString" placeholder="marker search string">
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group">
-          <label for="taxonomicRange">taxonomic-range</label>
-          <input type="text" class="form-control" id="taxonomicRange" placeholder="taxonmic range">
-        </div>
-        </div>
-    <div class="row" style="margin-top: 20px;">
-      <button type="button" class="btn btn-primary btn-md" >Execute Script</button>
+    <div class="form-group">
+      <label for="taxonomicRange">taxonomic-range</label>
+      <input type="text" class="form-control" id="taxonomicRange" placeholder="taxonmic range">
     </div>
-    <div class="row" style="margin-top: 20px;">
-      <div class="logs">
-        <h4 style="text-align: center; padding-top: 5px; color: #ffffff">Console Output</h4>
-        <ul id="messages"></ul>
-      </div>
+  </div> -->
+  <div class="row" style="margin-top: 20px;">
+    <button type="button" class="btn btn-primary btn-lg" >Execute</button>
+  </div>
+  <div class="row" style="margin-top: 20px;">
+    <div class="logs">
+      <h4 style="text-align: center; padding-top: 5px; color: #ffffff">Console Output</h4>
+      <ul id="messages"></ul>
     </div>
   </div>
+</div>
 {% endblock %}
