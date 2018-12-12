@@ -20,14 +20,14 @@
   <fieldset>
     <legend>Search String</legend>
     <div class="form-group">
-      <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Search String">
+      <input type="text" class="form-control" id="markerSearchString" placeholder="Search String">
     </div>
     <legend>Taxonomic Range</legend>
     <div class="form-group">
-      <select class="custom-select">
+      <select id="taxonomicRange" class="custom-select">
         <option selected="">Open this select menu</option>
-        <option value="1">Bellis</option>
-        <option value="2">Viridiplantae</option>
+        <option value="Bellis">Bellis</option>
+        <option value="Viridiplantae">Viridiplantae</option>
         <option value="3">...</option>
       </select>
     </div>
@@ -38,7 +38,7 @@
     </div>
     <legend>Sequence Length Filter</legend>
     <div class="form-group">
-      <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Search String">
+      <input type="text" class="form-control" id="sequenceLengthFilter" placeholder="100:2000">
     </div>
   </fieldset>
   <!-- <div class="row">

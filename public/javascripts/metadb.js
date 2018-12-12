@@ -6,8 +6,24 @@ $(function() {
   //emit event
 
   $('button').click(function(){
+    var params = ['metabDB/bin/reference_db_creator.pl'];
     var markerSearchString = $('#markerSearchString').val();
-    var params = [ 'metabDB/bin/reference_db_creator.pl', '--help'];
+    var taxonomicRange = $('#taxonomicRange').val();
+    var sequenceLengthFilter = $('#sequenceLengthFilter').val();
+    if(markerSearchString.length > 0){
+      params.push('--marker-search-string');
+      params.push(markerSearchString)
+    }
+    if(taxonomicRange.length > 0){
+      params.push('--taxonomic-range');
+      params.push(taxonomicRange)
+    }
+    if(sequenceLengthFilter.length > 0){
+      params.push('--sequence-length-filter');
+      params.push(sequenceLengthFilter)
+    }
+    params = ['metabDB/bin/reference_db_creator.pl', '--marker-search-string', 'ITS2', '--taxonomic-range', 'Bellis', '--sequence-length-filter', '100:2000']
+    console.log(params)
     socket.emit('execute', {
       parameters: params
     });
