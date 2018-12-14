@@ -24,18 +24,19 @@ metadbQueue.process(function(job, done){
    var spawn = require('child_process').spawn;
    var process = spawn('perl', job.data.data.parameters);
    var result = [];
+   var error = [];
    process.stdout.setEncoding('utf-8');
    process.stdout.on('data', function (data) {
      result.push(data);
    });
-   process.on('close', function(code){
-     done(null,{data: result.join("\n")})
-   })
    process.stderr.setEncoding('utf-8');
    process.stderr.on('data', function (data) {
-     done(null, {error: data})
-   });
-})
+     error.push(data)
+   })
+   process.on('close', function(code){
+     done(null,{data: result.join("\n"), error: error.join("\n")})
+   })
+});
 
 //setup socket connection
 io.on('connection', function(socket){
