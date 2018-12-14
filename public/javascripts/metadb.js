@@ -37,7 +37,7 @@ $(function() {
   })
 
   socket.on('err-logs', function(msg){
-    $('#messages').append($('<li>').text(msg));
+    $('#messages').append($('<li>').text(msg.data));
   });
 
 })
