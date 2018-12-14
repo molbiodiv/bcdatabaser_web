@@ -13,6 +13,30 @@ var usersRouter = require('./routes/users');
 var app = express();
 var server = app.listen(3141);
 var io = require('socket.io')(server);
+var metadbQueue = new Queue('execute pipeline', {
+  redis: {
+    host: 'redis',
+    port: 6379
+  }
+});
+metadbQueue.process(function(job, done){
+   var spawn = require('child_process').spawn;
+   var process = spawn('perl', job.data.data.parameters);
+   var result = [];
+   process.stdout.setEncoding('utf-8');
+   process.stdout.on('data', function (data) {
+     // socket.emit('logs', {data: data});
+     result.push(data);
+   });
+   process.on('close', function(code){
+     done(null,result.join("\n"))
+   })
+   // process.stderr.setEncoding('utf-8');
+   // process.stderr.on('data', function (data) {
+   //     socket.emit('err-logs', data);
+   // });
+  //console.log(job)
+})
 io.on('connection', function(socket){
   console.log('made socket connection', socket.id)
   socket.on('execute', function(data){
