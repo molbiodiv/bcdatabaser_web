@@ -29,12 +29,11 @@ metadbQueue.process(function(job, done){
      result.push(data);
    });
    process.on('close', function(code){
-     done(null,result.join("\n"))
+     done(null,{data: result.join("\n")})
    })
    process.stderr.setEncoding('utf-8');
    process.stderr.on('data', function (data) {
-     done(data)
-     // socket.emit('err-logs', data);
+     done(null, {error: data})
    });
 })
 
@@ -45,7 +44,12 @@ io.on('connection', function(socket){
     //add parameters to the queue
     metadbQueue.add({data}).then(function(job){
       job.finished().then(function(result){
-      socket.emit('logs', {data:result})
+        if(!('error' in result)){
+          socket.emit('logs', {data: result.data})
+        } else {
+          socket.emit('err-logs', {data: result.error})
+        }
+        console.log(result.error)
     }).catch(logError)
     }).catch(logError);
 
