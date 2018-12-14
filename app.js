@@ -13,6 +13,7 @@ var usersRouter = require('./routes/users');
 var app = express();
 var server = app.listen(3141);
 var io = require('socket.io')(server);
+//define process queue
 var metadbQueue = new Queue('execute pipeline', {
   redis: {
     host: 'redis',
@@ -25,41 +26,37 @@ metadbQueue.process(function(job, done){
    var result = [];
    process.stdout.setEncoding('utf-8');
    process.stdout.on('data', function (data) {
-     // socket.emit('logs', {data: data});
      result.push(data);
    });
    process.on('close', function(code){
      done(null,result.join("\n"))
    })
-   // process.stderr.setEncoding('utf-8');
-   // process.stderr.on('data', function (data) {
-   //     socket.emit('err-logs', data);
-   // });
-  //console.log(job)
+   process.stderr.setEncoding('utf-8');
+   process.stderr.on('data', function (data) {
+     done(data)
+     // socket.emit('err-logs', data);
+   });
 })
+
+//setup socket connection
 io.on('connection', function(socket){
   console.log('made socket connection', socket.id)
   socket.on('execute', function(data){
+    //add parameters to the queue
     metadbQueue.add({data}).then(function(job){
       job.finished().then(function(result){
       socket.emit('logs', {data:result})
     }).catch(logError)
     }).catch(logError);
+
+    metadbQueue.on('failed', function(job, err){
+      socket.emit('err-logs', err)
+    })
+
   })
 });
 
-var executeScript = function(socket, data){
-  var spawn = require('child_process').spawn;
-  var process = spawn('perl', data.parameters);
-  process.stdout.setEncoding('utf-8');
-  process.stdout.on('data', function (data) {
-      socket.emit('logs', {data: data});
-  });
-  process.stderr.setEncoding('utf-8');
-  process.stderr.on('data', function (data) {
-      socket.emit('err-logs', data);
-  });
-}
+function logError(error){console.error(error)}
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
