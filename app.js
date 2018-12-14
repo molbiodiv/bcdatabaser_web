@@ -45,7 +45,8 @@ io.on('connection', function(socket){
     //add parameters to the queue
     metadbQueue.add({data}).then(function(job){
       job.finished().then(function(result){
-        if(!('error' in result)){
+        console.log(result)
+        if(!(result.error.length > 0)){
           socket.emit('logs', {data: result.data})
         } else {
           socket.emit('err-logs', {data: result.error})
