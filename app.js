@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var exec = require('child_process').exec;
+var Queue = require('bull');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
