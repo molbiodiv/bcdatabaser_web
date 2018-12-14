@@ -3,7 +3,7 @@ ARG BRANCH=master
 LABEL maintainer="markus.ankenbrand@uni-wuerzburg.de"
 
 RUN apt-get update \
-&& apt-get install -yq git unzip vim curl wget build-essential liblog-log4perl-perl libgetopt-argvfile-perl libdatetime-format-natural-perl ncbi-entrez-direct libbio-perl-perl \
+&& apt-get install -yq git unzip vim curl wget build-essential liblog-log4perl-perl libgetopt-argvfile-perl libdatetime-format-natural-perl ncbi-entrez-direct libbio-perl-perl inetutils-ping netcat \
 && rm -rf /var/lib/apt/lists/*
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 RUN apt-get update \

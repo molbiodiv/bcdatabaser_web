@@ -4,10 +4,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: node_modules/.bin/nodemon -w . -e twig
+    command: node_modules/.bin/nodemon -w . -e twig js
     volumes:
       - ..:/metabDB_web
     working_dir: /metabDB_web
     ports:
       - "3000:3000"
       - "3141:3141"
+    links:
+      - redis
+
+  redis:
+    image: redis
+    expose:
+      - 6379
