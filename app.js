@@ -40,7 +40,11 @@ metadbQueue.process(function(job, done){
 io.on('connection', function(socket){
   console.log('made socket connection', socket.id)
   socket.on('execute', function(data){
-    executeScript(socket, data);
+    metadbQueue.add({data}).then(function(job){
+      job.finished().then(function(result){
+      socket.emit('logs', {data:result})
+    }).catch(logError)
+    }).catch(logError);
   })
 });
 
