@@ -21,21 +21,28 @@ var metadbQueue = new Queue('execute pipeline', {
   }
 });
 metadbQueue.process(function(job, done){
-   var spawn = require('child_process').spawn;
-   var process = spawn('perl', job.data.data.parameters);
-   var result = [];
-   var error = [];
-   process.stdout.setEncoding('utf-8');
-   process.stdout.on('data', function (data) {
-     result.push(data);
+   var exec = require('child_process').exec;
+   var process = exec('/usr/bin/perl metabDB/bin/reference_db_creator.pl --marker-search-string ITS2 --taxonomic-range Bellis', (error, stdout, stderr) => {
+     if (error) {
+       console.error(`exec error: ${error}`);
+       return;
+     }
+     console.log(`stdout: ${stdout}`);
+     console.log(`stderr: ${stderr}`);
    });
-   process.stderr.setEncoding('utf-8');
-   process.stderr.on('data', function (data) {
-     error.push(data)
-   })
-   process.on('close', function(code){
-     done(null,{data: result.join("\n"), error: error.join("\n")})
-   })
+   // var result = [];
+   // var error = [];
+   // process.stdout.setEncoding('utf-8');
+   // process.stdout.on('data', function (data) {
+   //   result.push(data);
+   // });
+   // process.stderr.setEncoding('utf-8');
+   // process.stderr.on('data', function (data) {
+   //   error.push(data)
+   // })
+   // process.on('close', function(code){
+   //   done(null,{data: result.join("\n"), error: error.join("\n")})
+   // })
 });
 
 //setup socket connection
@@ -45,13 +52,11 @@ io.on('connection', function(socket){
     //add parameters to the queue
     metadbQueue.add({data}).then(function(job){
       job.finished().then(function(result){
-        console.log(result)
         if(!(result.error.length > 0)){
           socket.emit('logs', {data: result.data})
         } else {
           socket.emit('err-logs', {data: result.error})
         }
-        console.log(result.error)
     }).catch(logError)
     }).catch(logError);
 
