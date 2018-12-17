@@ -22,8 +22,8 @@ $(function() {
       params.push('--sequence-length-filter');
       params.push(sequenceLengthFilter)
     }
-    params = ['metabDB/bin/reference_db_creator.pl', '--marker-search-string', 'ITS2', '--taxonomic-range', 'Bellis', '--sequence-length-filter', '100:2000']
-    //params = ['metabDB/bin/reference_db_creator.pl']
+    //params = ['metabDB/bin/reference_db_creator.pl', '--marker-search-string', 'ITS2', '--taxonomic-range', 'Bellis', '--sequence-length-filter', '100:2000']
+    params = ['metabDB/bin/reference_db_creator.pl', '--help']
     console.log(params)
     socket.emit('execute', {
       parameters: params
