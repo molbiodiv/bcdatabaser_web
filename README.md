@@ -1,13 +1,17 @@
-# metaDB web interface
+# About
 
 Web interface for executing the pipeline [metaDB](https://github.com/molbiodiv/metabDB)
 
-## Usage
+## Docker setup
+### Prerequisites
+- [docker](https://docs.docker.com/)
+- [docker-compose](https://docs.docker.com/compose/)
 
-```git clone https://github.com/sonjahohlfeld/metaDB_web.git```
+### Clon source code and initialize containers
+```{bash}
+git clone https://github.com/sonjahohlfeld/metaDB_web.git --recursive
+cd metaDB_web/docker
+docker-compose up -d
+```
 
-```cd metaDB_web/```
-
-```npm install```
-
-```npm start```
+Point your browser to [http://localhost:3000](http://localhost:3000) and you get access to the web interface.
