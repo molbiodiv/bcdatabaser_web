@@ -25,6 +25,7 @@ metadbQueue.process(function(job, done){
    var process = spawn('perl', job.data.data.parameters);
    var result = [];
    var error = [];
+   process.stdin.end();
    process.stdout.setEncoding('utf-8');
    process.stdout.on('data', function (data) {
      result.push(data);
