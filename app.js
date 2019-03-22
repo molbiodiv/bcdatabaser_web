@@ -22,20 +22,23 @@ var metadbQueue = new Queue('execute pipeline', {
 });
 metadbQueue.process(function(job, done){
    var spawn = require('child_process').spawn;
-   var process = spawn('perl', job.data.data.parameters);
+   let parameters = job.data.data.parameters;
+   let random_id = "random"
+   parameters.push('--outdir', '/tmp/'+random_id, '--zip')
+   var process = spawn('/metabDB_web/bcdatabaser/bin/reference_db_creator.pl', parameters);
    var result = [];
    var error = [];
    process.stdin.end();
    process.stdout.setEncoding('utf-8');
    process.stdout.on('data', function (data) {
-     result.push(data);
+     result.push(data)
    });
    process.stderr.setEncoding('utf-8');
    process.stderr.on('data', function (data) {
      error.push(data)
    })
    process.on('close', function(code){
-     done(null,{data: result.join("\n"), error: error.join("\n")})
+     done(null,{data: result.join("\n"), error: error.join("\n"), download_link: random_id})
    })
 });
 
@@ -51,6 +54,9 @@ io.on('connection', function(socket){
           socket.emit('logs', {data: result.data})
         } else {
           socket.emit('err-logs', {data: result.error})
+        }
+        if(typeof result.download_link !== "undefined"){
+          socket.emit('download-link', {href: result.download_link})
         }
         console.log(result.error)
     }).catch(logError)

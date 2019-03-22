@@ -22,8 +22,8 @@ $(function() {
       params.push('--sequence-length-filter');
       params.push(sequenceLengthFilter)
     }
-    //params = ['metabDB/bin/reference_db_creator.pl', '--marker-search-string', 'ITS2', '--taxonomic-range', 'Bellis', '--sequence-length-filter', '100:2000']
-    params = ['metabDB/bin/reference_db_creator.pl', '--help']
+    params = ['--marker-search-string', 'ITS2', '--taxonomic-range', 'Bellis perennis', '--sequence-length-filter', '100:2000']
+    //params = ['metabDB/bin/reference_db_creator.pl', '--help']
     console.log(params)
     socket.emit('execute', {
       parameters: params
@@ -34,11 +34,19 @@ $(function() {
   // listen for events
 
   socket.on('logs', function(data){
-    $('#messages').append($('<li>').text(data.data));
+    $('#messages').append($('<textarea>').text(data.data));
   })
 
   socket.on('err-logs', function(msg){
-    $('#messages').append($('<li>').text(msg.data));
+    $('#messages').append($('<textarea>').text(msg.data));
+  });
+
+  socket.on('download-link', function(msg){
+    var button = $('<a>').text('Download');
+    button.addClass('btn');
+    button.addClass('btn-primary');
+    button.attr('href', 'download?id='+msg.href);
+    $('#messages').append(button);
   });
 
 })
