@@ -28,21 +28,26 @@ $(function() {
   })
 
   // listen for events
+  function handle_log(data){
+    var logarea = $('<textarea>');
+    logarea.text(data.data);
+    logarea.css('width', '100%');
+    logarea.css('height', 600);
+    logarea.css('font-family', 'mono');
+    logarea.attr('readonly','readonly')
+    $('#messages').append(logarea);
+  }
 
-  socket.on('logs', function(data){
-    $('#messages').append($('<textarea>').text(data.data));
-  })
-
-  socket.on('err-logs', function(msg){
-    $('#messages').append($('<textarea>').text(msg.data));
-  });
+  socket.on('logs', handle_log);
+  socket.on('err-logs', handle_log);
 
   socket.on('download-link', function(msg){
     var button = $('<a>').text('Download');
     button.addClass('btn');
     button.addClass('btn-primary');
+    button.addClass('btn-lg');
     button.attr('href', 'download?id='+msg.href);
-    $('#messages').append(button);
+    $('#result_buttons').append(button);
   });
 
 })
