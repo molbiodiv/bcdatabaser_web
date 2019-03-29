@@ -50,4 +50,12 @@ $(function() {
     $('#result_buttons').append(button);
   });
 
+  $('#markerSearchPresetITS2').on('click', function(){
+    $('#markerSearchString').val("ITS2 OR 'internal transcribed spacer2'");
+    return false;
+  })
+  $('#markerSearchPresetRbcL').on('click', function(){
+    $('#markerSearchString').val("rbcL OR 'ribulose-1,5-bisphosphate carboxylase/oxygenase large subunit'");
+    return false;
+  })
 })
