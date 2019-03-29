@@ -6,25 +6,21 @@ $(function() {
   //emit event
 
   $('button').click(function(){
-    var params = ['metabDB/bin/reference_db_creator.pl'];
+    var params = {};
     var markerSearchString = $('#markerSearchString').val();
     var taxonomicRange = $('#taxonomicRange').val();
     var sequenceLengthFilter = $('#sequenceLengthFilter').val();
     if(markerSearchString.length > 0){
-      params.push('--marker-search-string');
-      params.push(markerSearchString)
+      params['marker-search-string'] = markerSearchString;
     }
     if(taxonomicRange.length > 0){
-      params.push('--taxonomic-range');
-      params.push(taxonomicRange)
+      params['taxonomic-range'] = taxonomicRange;
     }
     if(sequenceLengthFilter.length > 0){
-      params.push('--sequence-length-filter');
-      params.push(sequenceLengthFilter)
+      params['sequence-length-filter'] = sequenceLengthFilter;
     }
-    params = ['--marker-search-string', 'ITS2', '--taxonomic-range', 'Bellis perennis', '--sequence-length-filter', '100:2000']
-    //params = ['metabDB/bin/reference_db_creator.pl', '--help']
-    console.log(params)
+    //TODO add all the other params
+    //console.log(params)
     socket.emit('execute', {
       parameters: params
     });

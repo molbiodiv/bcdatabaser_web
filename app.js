@@ -22,9 +22,21 @@ var metadbQueue = new Queue('execute pipeline', {
 });
 metadbQueue.process(function(job, done){
    var spawn = require('child_process').spawn;
-   let parameters = job.data.data.parameters;
-   let random_id = "random"
-   parameters.push('--outdir', '/tmp/'+random_id, '--zip')
+   let parameters = [];
+   let random_id =  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+   parameters.push('--outdir', '/tmp/'+random_id, '--zip', '--check-tax-names')
+   let userParameters = job.data.data.parameters;
+   if(!('marker-search-string' in userParameters)){
+     done(null, {error: 'Error! No marker search string provided'});
+     return;
+   }
+   parameters.push('--marker-search-string', userParameters.markerSearchString);
+   if('taxonomic-range' in userParameters){
+     parameters.push('--taxonomic-range', userParameters.taxonomicRange);
+   }
+   if('sequence-length-filter' in userParameters){
+     parameters.push('--sequence-length-filter', userParameters.sequenceLengthFilter);
+   }
    var process = spawn('/metabDB_web/bcdatabaser/bin/reference_db_creator.pl', parameters);
    var result = [];
    var error = [];
