@@ -30,12 +30,12 @@ metadbQueue.process(function(job, done){
      done(null, {error: 'Error! No marker search string provided'});
      return;
    }
-   parameters.push('--marker-search-string', userParameters.markerSearchString);
+   parameters.push('--marker-search-string', userParameters['marker-search-string']);
    if('taxonomic-range' in userParameters){
-     parameters.push('--taxonomic-range', userParameters.taxonomicRange);
+     parameters.push('--taxonomic-range', userParameters['taxonomic-range']);
    }
    if('sequence-length-filter' in userParameters){
-     parameters.push('--sequence-length-filter', userParameters.sequenceLengthFilter);
+     parameters.push('--sequence-length-filter', userParameters['sequence-length-filter']);
    }
    var process = spawn('/metabDB_web/bcdatabaser/bin/reference_db_creator.pl', parameters);
    var result = [];
