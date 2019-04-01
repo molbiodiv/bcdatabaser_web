@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var exec = require('child_process').exec;
 var Queue = require('bull');
+var tmp = require('tmp');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -23,9 +24,17 @@ var metadbQueue = new Queue('execute pipeline', {
 metadbQueue.process(function(job, done){
    var spawn = require('child_process').spawn;
    let parameters = [];
-   let random_id =  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-   parameters.push('--outdir', '/tmp/'+random_id, '--zip', '--check-tax-names')
+   let tmpdir = tmp.dirSync();
    let userParameters = job.data.data.parameters;
+   if(!('outdir' in userParameters)){
+     done(null, {error: 'Error! No outdir string provided'});
+     return;
+   }
+   if(userParameters['outdir'].indexOf('/') !== -1){
+     done(null, {error: 'Error! Illegal character in output name: "/"'});
+     return;
+   }
+   parameters.push('--outdir', userParameters['outdir']);
    if(!('marker-search-string' in userParameters)){
      done(null, {error: 'Error! No marker search string provided'});
      return;
@@ -37,9 +46,11 @@ metadbQueue.process(function(job, done){
    if('sequence-length-filter' in userParameters){
      parameters.push('--sequence-length-filter', userParameters['sequence-length-filter']);
    }
-   var process = spawn('/metabDB_web/bcdatabaser/bin/reference_db_creator.pl', parameters);
+   parameters.push('--zip', '--check-tax-names', '--zenodo-token', '/metabDB_web/bcdatabaser/.zenodo_token')
+   var process = spawn('/metabDB_web/bcdatabaser/bin/reference_db_creator.pl', parameters, {'cwd': tmpdir.name});
    var result = [];
    var error = [];
+   let zenodo_info = {};
    process.stdin.end();
    process.stdout.setEncoding('utf-8');
    process.stdout.on('data', function (data) {
@@ -47,10 +58,21 @@ metadbQueue.process(function(job, done){
    });
    process.stderr.setEncoding('utf-8');
    process.stderr.on('data', function (data) {
+     let zenodo_pos = data.indexOf('zenodo_');
+     if(zenodo_pos !== -1){
+       zenodo_lines = data.split("\n");
+       for(zline of zenodo_lines){
+         if(zline.indexOf("zenodo_") !== 0){
+           continue;
+         }
+         let parts = zline.split(": ");
+         zenodo_info[parts[0]] = parts[1];
+       }
+     }
      error.push(data)
    })
    process.on('close', function(code){
-     done(null,{data: result.join("\n"), error: error.join("\n"), download_link: random_id})
+     done(null,{data: result.join("\n"), error: error.join("\n"), zenodo_info: zenodo_info})
    })
 });
 
@@ -67,8 +89,8 @@ io.on('connection', function(socket){
         } else {
           socket.emit('err-logs', {data: result.error})
         }
-        if(typeof result.download_link !== "undefined"){
-          socket.emit('download-link', {href: result.download_link})
+        if('zenodo_file_download' in result.zenodo_info){
+          socket.emit('download-link', {href: result.zenodo_info.zenodo_file_download, zenodo_info: result.zenodo_info})
         }
         console.log(result.error)
     }).catch(logError)

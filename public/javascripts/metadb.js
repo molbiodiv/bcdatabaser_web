@@ -8,10 +8,14 @@ $(function() {
   $('button').click(function(){
     var params = {};
     var markerSearchString = $('#markerSearchString').val();
+    var outdir = $('#outdir').val();
     var taxonomicRange = $('#taxonomicRange').val();
     var sequenceLengthFilter = $('#sequenceLengthFilter').val();
     if(markerSearchString.length > 0){
       params['marker-search-string'] = markerSearchString;
+    }
+    if(outdir.length > 0){
+      params['outdir'] = outdir;
     }
     if(taxonomicRange.length > 0){
       params['taxonomic-range'] = taxonomicRange;
@@ -46,7 +50,7 @@ $(function() {
     button.addClass('btn');
     button.addClass('btn-primary');
     button.addClass('btn-lg');
-    button.attr('href', 'download?id='+msg.href);
+    button.attr('href', msg.href);
     $('#result_buttons').append(button);
   });
 
