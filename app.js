@@ -6,6 +6,7 @@ var logger = require('morgan');
 var exec = require('child_process').exec;
 var Queue = require('bull');
 var tmp = require('tmp');
+const fs = require('fs');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -21,11 +22,13 @@ var metadbQueue = new Queue('execute pipeline', {
     port: 6379
   }
 });
+// make queue available in routers
+app.locals.metadbQueue = metadbQueue;
 metadbQueue.process(function(job, done){
-   var spawn = require('child_process').spawn;
    let parameters = [];
-   let tmpdir = tmp.dirSync();
+   let tmpdir = tmp.dirSync().name;
    let userParameters = job.data.data.parameters;
+   let taxaFile = job.data.data.taxaFile;
    if(!('outdir' in userParameters)){
      done(null, {error: 'Error! No outdir string provided'});
      return;
@@ -47,7 +50,23 @@ metadbQueue.process(function(job, done){
      parameters.push('--sequence-length-filter', userParameters['sequence-length-filter']);
    }
    parameters.push('--zip', '--check-tax-names', '--zenodo-token', '/metabDB_web/bcdatabaser/.zenodo_token')
-   var process = spawn('/metabDB_web/bcdatabaser/bin/reference_db_creator.pl', parameters, {'cwd': tmpdir.name});
+   if(taxaFile){
+     fs.writeFile(tmpdir+'/species_list.txt', taxaFile.data, (err) => { 
+      if (err){
+        done(null, {error: 'Error! There was a problem with the taxa file you uploaded.'+err.message});
+        return; 
+      }
+      parameters.push('--taxa-list', 'species_list.txt')
+      spawn_process(parameters, tmpdir, done);
+     });
+   } else {
+     spawn_process(parameters, tmpdir, done);
+   }
+});
+
+function spawn_process(parameters, tmpdir, done){
+   var spawn = require('child_process').spawn;
+   var process = spawn('/metabDB_web/bcdatabaser/bin/reference_db_creator.pl', parameters, {'cwd': tmpdir});
    var result = [];
    var error = [];
    let zenodo_info = {};
@@ -74,7 +93,7 @@ metadbQueue.process(function(job, done){
    process.on('close', function(code){
      done(null,{data: result.join("\n"), error: error.join("\n"), zenodo_info: zenodo_info})
    })
-});
+}
 
 //setup socket connection
 io.on('connection', function(socket){

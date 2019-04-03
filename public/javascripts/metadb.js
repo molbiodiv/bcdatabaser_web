@@ -11,6 +11,7 @@ $(function() {
     var outdir = $('#outdir').val();
     var taxonomicRange = $('#taxonomicRange').val();
     var sequenceLengthFilter = $('#sequenceLengthFilter').val();
+    var taxaListFiles = $('#exampleInputFile')[0].files;
     if(markerSearchString.length > 0){
       params['marker-search-string'] = markerSearchString;
     }
@@ -23,11 +24,29 @@ $(function() {
     if(sequenceLengthFilter.length > 0){
       params['sequence-length-filter'] = sequenceLengthFilter;
     }
+    if(taxaListFiles.length > 0){
+      var taxaListFile = taxaListFiles[0];
+      var fileReader = new FileReader();
+      fileReader.readAsText(taxaListFile);
+      fileReader.onload = function(e){
+        socket.emit('execute', {
+          parameters: params,
+          taxaFile: { 
+            name: taxaListFile.name, 
+            type: taxaListFile.type, 
+            size: taxaListFile.size, 
+            data: e.target.result 
+          }
+        }); 
+      }
+    } else {
+      socket.emit('execute', {
+        parameters: params,
+        taxaFile: null
+      });
+    }
     //TODO add all the other params
     //console.log(params)
-    socket.emit('execute', {
-      parameters: params
-    });
     $(this).attr('disabled', 'none');
   })
 
