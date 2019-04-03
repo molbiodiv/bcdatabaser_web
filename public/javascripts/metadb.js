@@ -87,4 +87,25 @@ $(function() {
     $('#markerSearchString').val("rbcL OR 'ribulose-1,5-bisphosphate carboxylase/oxygenase large subunit'");
     return false;
   })
+
+  $('#prevResults').DataTable({
+    ajax: '/queue',
+    columns: [
+      {
+        "data": "time",
+        "render": (data,type,row,meta) => new Date(data).toDateString()
+      },
+      { "data": "name" },
+      { "data": "marker" },
+      { "data": "range" },
+      {
+        "data": "zenodo_badge",
+        "render": (data,type,row,meta) => $('<img>').attr('src', data).get(0).outerHTML
+      }
+    ],
+    dom: 'frtipB',
+    buttons: [
+      'copy', 'csv', 'pdf'
+    ]
+  });
 })

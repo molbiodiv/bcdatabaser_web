@@ -6,10 +6,23 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'MetaDB' });
 });
 
-router.get('/download', function(req, res, next) {
-  let id = req.query.id;
-  //TODO sanitize input. Restricted through .zip suffix (not sufficient)
-  res.download('/tmp/'+id+'.zip', id+'.zip');
+router.get('/queue', function(req, res, next) {
+  let metadbQueue = req.app.locals.metadbQueue;
+  metadbQueue.getJobs(['completed']).then(
+    (result) => {
+      filtered_result = result.filter(x => 'zenodo_info' in x.returnvalue && 'zenodo_doi' in x.returnvalue.zenodo_info);
+      final_results = filtered_result.map(
+        x => {return {
+          'name': x.data.data.parameters['outdir'],
+          'marker': x.data.data.parameters['marker-search-string'],
+          'range': x.data.data.parameters['taxonomic-range'],
+          'time': x.finishedOn,
+          'doi': x.returnvalue.zenodo_info.zenodo_doi,
+          'zenodo_badge': x.returnvalue.zenodo_info.zenodo_badge_link
+        }}
+      )
+      res.json({data: final_results});
+    });
 });
 
 module.exports = router;
