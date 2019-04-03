@@ -71,6 +71,12 @@ $(function() {
     button.addClass('btn-lg');
     button.attr('href', msg.href);
     $('#result_buttons').append(button);
+    var badge = $('<img>');
+    badge.attr('src', msg.zenodo_info.zenodo_badge_link);
+    var badgeLink = $('<a>');
+    badgeLink.attr('href', msg.zenodo_info.zenodo_record_link);
+    badgeLink.append(badge);
+    $('#result_buttons').append(badgeLink);
   });
 
   $('#markerSearchPresetITS2').on('click', function(){
