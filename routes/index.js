@@ -6,6 +6,11 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'BCdatabaser' });
 });
 
+router.get('/job_counts', function(req, res, next) {
+  let metadbQueue = req.app.locals.metadbQueue;
+  metadbQueue.getJobCounts().then(result => res.json(result));
+});
+
 router.get('/queue', function(req, res, next) {
   let metadbQueue = req.app.locals.metadbQueue;
   metadbQueue.getJobs(['completed']).then(
