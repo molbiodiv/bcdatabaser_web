@@ -66,7 +66,7 @@ metadbQueue.process(function(job, done){
 
 function spawn_process(parameters, tmpdir, done){
    var spawn = require('child_process').spawn;
-   var process = spawn('/metabDB_web/bcdatabaser/bin/reference_db_creator.pl', parameters, {'cwd': tmpdir});
+   var process = spawn('/metabDB_web/bcdatabaser/bin/bcdatabaser.pl', parameters, {'cwd': tmpdir});
    var result = [];
    var error = [];
    let zenodo_info = {};
