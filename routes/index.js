@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'MetaDB' });
+  res.render('index', { title: 'BCdatabaser' });
 });
 
 router.get('/queue', function(req, res, next) {
