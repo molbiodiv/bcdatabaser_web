@@ -18,7 +18,8 @@ router.get('/queue', function(req, res, next) {
           'range': x.data.data.parameters['taxonomic-range'],
           'time': x.finishedOn,
           'doi': x.returnvalue.zenodo_info.zenodo_doi,
-          'zenodo_badge': x.returnvalue.zenodo_info.zenodo_badge_link
+          'zenodo_badge': x.returnvalue.zenodo_info.zenodo_badge_link,
+          'zenodo_record_link': x.returnvalue.zenodo_info.zenodo_record_link
         }}
       )
       res.json({data: final_results});

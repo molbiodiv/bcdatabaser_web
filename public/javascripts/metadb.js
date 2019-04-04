@@ -93,16 +93,17 @@ $(function() {
     columns: [
       {
         "data": "time",
-        "render": (data,type,row,meta) => new Date(data).toDateString()
+        "render": (data,type,row,meta) => new Date(data).toISOString().substr(0,10)
       },
       { "data": "name" },
       { "data": "marker" },
       { "data": "range" },
       {
         "data": "zenodo_badge",
-        "render": (data,type,row,meta) => $('<img>').attr('src', data).get(0).outerHTML
+        "render": (data,type,row,meta) => $('<a>').attr('href', row.zenodo_record_link).append($('<img>').attr('src', data)).get(0).outerHTML
       }
     ],
+    order: [[ 0, "desc" ]],
     dom: 'frtipB',
     buttons: [
       'copy', 'csv', 'pdf'
