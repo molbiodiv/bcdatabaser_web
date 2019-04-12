@@ -101,6 +101,10 @@ $(function() {
       {
         "data": "zenodo_badge",
         "render": (data,type,row,meta) => $('<a>').attr('href', row.zenodo_record_link).append($('<img>').attr('src', data)).get(0).outerHTML
+      },
+      {
+        "data": "id",
+        "render": (data,type,row,meta) => $('<a>').attr('href', 'job_details?id='+data).text("Details").get(0).outerHTML
       }
     ],
     order: [[ 0, "desc" ]],
