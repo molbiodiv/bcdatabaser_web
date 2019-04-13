@@ -32,6 +32,14 @@ router.get('/queue', function(req, res, next) {
     });
 });
 
+router.post('/process', function(req, res, next) {
+  let metadbQueue = req.app.locals.metadbQueue;
+  console.log(req.body)
+  metadbQueue.add({data: req.body}).then(function(job){
+    res.json({id: job.id});
+  });
+});
+
 router.get('/job_details', function(req, res, next) {
   let metadbQueue = req.app.locals.metadbQueue;
   metadbQueue.getJob(req.param("id")).then(

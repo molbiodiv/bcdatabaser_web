@@ -21,6 +21,9 @@
         <a class="btn btn-primary btn-lg" href="https://github.com/molbiodiv/bcdatabaser" role="button">Learn more</a>
         <a class="btn btn-primary btn-lg" href="https://github.com/molbiodiv/bcdatabaser_web" role="button"><i class="fa fa-github"></i></a>
       </p>
+      <p id="queue_status" style="display:none">
+        There are currently <b id="running_jobs">x</b> jobs running and <b id="pending_jobs">y</b> pending.
+      </p>
     </div>
   </div>
   <fieldset>
@@ -59,6 +62,14 @@
       <h4 style="text-align: center; padding-top: 5px; color: #ffffff">Console Output</h4>
     </div>
   </div>
+
+  <div class="alert alert-success" role="alert" id="your_job_notification" style="display:none">
+    <h4 class="alert-heading">Well done!</h4>
+    <p>Your job was submitted successfully. It will be processed as soon as possible. Please check back later, it will appear in the results table below.</p>
+    <hr>
+    <p class="mb-0">To check on the status and to see possible error messages if it does not show up in the results table soon. Your job id is: <a id="your_job" href="#">XYZ</a></p>
+  </div>
+
   <div class="row" id="prevResultPanel" style="margin-top: 20px;">
     <h4 style="text-align: center; padding-top: 5px; color: #ffffff">Previous Results</h4>
     <table class="table table-hover" id="prevResults">

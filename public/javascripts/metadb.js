@@ -1,9 +1,6 @@
 // make connection
 
 $(function() {
-  var socket = io.connect('http://127.0.0.1:3141');
-
-  //emit event
 
   $('button').click(function(){
     var params = {};
@@ -29,20 +26,34 @@ $(function() {
       var fileReader = new FileReader();
       fileReader.readAsText(taxaListFile);
       fileReader.onload = function(e){
-        socket.emit('execute', {
-          parameters: params,
-          taxaFile: { 
-            name: taxaListFile.name, 
-            type: taxaListFile.type, 
-            size: taxaListFile.size, 
-            data: e.target.result 
+        $.ajax('process', {
+          method: 'POST',
+          data: JSON.stringify({
+            parameters: params,
+            taxaFile: { 
+              name: taxaListFile.name, 
+              type: taxaListFile.type, 
+              size: taxaListFile.size, 
+              data: e.target.result 
+            }
+          }),
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: (data) => {
+            $('#your_job').attr('href', 'job_details?id='+data.id).text(data.id);
+            $('#your_job_notification').show();
           }
-        }); 
+        });
       }
     } else {
-      socket.emit('execute', {
-        parameters: params,
-        taxaFile: null
+      $.ajax('process', {
+        method: 'POST',
+        data: JSON.stringify({
+          parameters: params,
+          taxaFile: null
+        }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"
       });
     }
     //TODO add all the other params
@@ -60,24 +71,6 @@ $(function() {
     logarea.attr('readonly','readonly')
     $('#messages').append(logarea);
   }
-
-  socket.on('logs', handle_log);
-  socket.on('err-logs', handle_log);
-
-  socket.on('download-link', function(msg){
-    var button = $('<a>').text('Download');
-    button.addClass('btn');
-    button.addClass('btn-primary');
-    button.addClass('btn-lg');
-    button.attr('href', msg.href);
-    $('#result_buttons').append(button);
-    var badge = $('<img>');
-    badge.attr('src', msg.zenodo_info.zenodo_badge_link);
-    var badgeLink = $('<a>');
-    badgeLink.attr('href', msg.zenodo_info.zenodo_record_link);
-    badgeLink.append(badge);
-    $('#result_buttons').append(badgeLink);
-  });
 
   $('#markerSearchPresetITS2').on('click', function(){
     $('#markerSearchString').val("ITS2 OR 'internal transcribed spacer2'");
@@ -113,4 +106,11 @@ $(function() {
       'copy', 'csv', 'pdf'
     ]
   });
+  $.ajax('job_counts', {
+    success: (data, textStatus) => {
+      $('#running_jobs').text(data.active)
+      $('#pending_jobs').text(data.waiting)
+      $('#queue_status').show()
+    }
+  })
 })
