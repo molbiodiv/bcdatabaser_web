@@ -7,7 +7,6 @@ $(function() {
     var markerSearchString = $('#markerSearchString').val();
     var outdir = $('#outdir').val();
     var taxonomicRange = $('#taxonomicRange').val();
-    var sequenceLengthFilter = $('#sequenceLengthFilter').val();
     var taxaListFiles = $('#exampleInputFile')[0].files;
     if(markerSearchString.length > 0){
       params['marker-search-string'] = markerSearchString;
@@ -17,9 +16,6 @@ $(function() {
     }
     if(taxonomicRange.length > 0){
       params['taxonomic-range'] = taxonomicRange;
-    }
-    if(sequenceLengthFilter.length > 0){
-      params['sequence-length-filter'] = sequenceLengthFilter;
     }
     if(taxaListFiles.length > 0){
       var taxaListFile = taxaListFiles[0];
