@@ -12,10 +12,7 @@ const fs = require('fs');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-//setup socket connection
 var app = express();
-var server = app.listen(3141);
-var io = require('socket.io')(server);
 //define process queue
 var metadbQueue = new Queue('execute pipeline', {
   redis: {
@@ -95,33 +92,6 @@ function spawn_process(parameters, tmpdir, done){
      done(null,{data: result.join("\n"), error: error.join("\n"), zenodo_info: zenodo_info})
    })
 }
-
-//setup socket connection
-io.on('connection', function(socket){
-  console.log('made socket connection', socket.id)
-  socket.on('execute', function(data){
-    //add parameters to the queue
-    metadbQueue.add({data}).then(function(job){
-      job.finished().then(function(result){
-        console.log(result)
-        if(!(result.error.length > 0)){
-          socket.emit('logs', {data: result.data})
-        } else {
-          socket.emit('err-logs', {data: result.error})
-        }
-        if('zenodo_file_download' in result.zenodo_info){
-          socket.emit('download-link', {href: result.zenodo_info.zenodo_file_download, zenodo_info: result.zenodo_info})
-        }
-        console.log(result.error)
-    }).catch(logError)
-    }).catch(logError);
-
-    metadbQueue.on('failed', function(job, err){
-      socket.emit('err-logs', err)
-    })
-
-  })
-});
 
 function logError(error){console.error(error)}
 
