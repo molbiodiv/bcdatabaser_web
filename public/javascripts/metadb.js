@@ -35,7 +35,7 @@ $(function() {
           }),
           contentType: "application/json; charset=utf-8",
           dataType: "json",
-          success: (data) => {
+          complete: (data) => {
             $('#your_job').attr('href', 'job_details?id='+data.id).text(data.id);
             $('#your_job_notification').show();
           }

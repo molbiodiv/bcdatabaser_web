@@ -14,6 +14,7 @@
         This web interface exposes a subset of the parameters of the <a href="https://github.com/molbiodiv/bcdatabaser">command line version</a>.
         Also all databases build here are automatically pushed to zenodo and publicly listed.
         If you want to create large numbers of databases, private databases or use more custom parameters please use the command line version instead.
+        Taxonomic range and taxa list are per default checked against NCBI Taxonomy names and 
       </p>
       <hr class="my-4">
       <p>Some information how to use the pipeline</p>
@@ -31,25 +32,26 @@
     <div class="form-group">
       Presets:
       <a class="btn" id="markerSearchPresetITS2" href="#" role="button">ITS2</a>
-      <a class="btn" id="markerSearchPresetRbcL" href="#" role="button">rbcL</a>
+      <a class="btn" id="markerSearchPresetRbcL" href="#" role="button">rbcL</a><br>
+      First word will be used in output file name, so the commonly used marker abbreviation code is recommended
       <input type="text" class="form-control" id="markerSearchString" placeholder="Search String">
-    </div>
-    <legend>Output name</legend>
-    <div class="form-group">
-      Recommended Format: marker.taxonomicRange.countryCode.date
-      <input type="text" class="form-control" id="outdir" placeholder="its2.viridiplantae.de.2019-04-01">
     </div>
     <legend>Taxonomic Range</legend>
     <div class="form-group">
+      Only child taxa of this will be considered
       <input type="text" class="form-control" id="taxonomicRange" placeholder="Viridiplantae">
     </div>
     <legend>Taxa List</legend>
     <div class="form-group">
+      plain text file, one taxon per line
+      <input type="text" class="form-control" id="taxaListDescription" placeholder="US-CA">
       <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
     </div>
-    <legend>Sequence Length Filter</legend>
+    <legend>Output name</legend>
     <div class="form-group">
-      <input type="text" class="form-control" id="sequenceLengthFilter" placeholder="100:2000">
+      Recommended Format: marker.taxonomicRange.countryCode.date
+      TODO: build from input, show preview
+      <input type="text" class="form-control" id="outdir" placeholder="its2.viridiplantae.de.2019-04-01">
     </div>
   </fieldset>
   <div class="row" style="margin-top: 20px;">
