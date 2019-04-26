@@ -2,17 +2,17 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 var logger = require('morgan');
 var exec = require('child_process').exec;
 var Queue = require('bull');
+var tmp = require('tmp');
+const fs = require('fs');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-//setup socket connection
 var app = express();
-var server = app.listen(3141);
-var io = require('socket.io')(server);
 //define process queue
 var metadbQueue = new Queue('execute pipeline', {
   redis: {
@@ -20,52 +20,75 @@ var metadbQueue = new Queue('execute pipeline', {
     port: 6379
   }
 });
+// make queue available in routers
+app.locals.metadbQueue = metadbQueue;
 metadbQueue.process(function(job, done){
-   var exec = require('child_process').exec;
-   var process = exec('/usr/bin/perl metabDB/bin/reference_db_creator.pl --marker-search-string ITS2 --taxonomic-range Bellis', (error, stdout, stderr) => {
-     if (error) {
-       console.error(`exec error: ${error}`);
-       return;
-     }
-     console.log(`stdout: ${stdout}`);
-     console.log(`stderr: ${stderr}`);
+   let parameters = [];
+   let tmpdir = tmp.dirSync().name;
+   let userParameters = job.data.data.parameters;
+   let taxaFile = job.data.data.taxaFile;
+   if(!('outdir' in userParameters)){
+     done(null, {error: 'Error! No outdir string provided'});
+     return;
+   }
+   if(userParameters['outdir'].indexOf('/') !== -1){
+     done(null, {error: 'Error! Illegal character in output name: "/"'});
+     return;
+   }
+   parameters.push('--outdir', userParameters['outdir']);
+   if(!('marker-search-string' in userParameters)){
+     done(null, {error: 'Error! No marker search string provided'});
+     return;
+   }
+   parameters.push('--marker-search-string', userParameters['marker-search-string']);
+   if('taxonomic-range' in userParameters){
+     parameters.push('--taxonomic-range', userParameters['taxonomic-range']);
+   }
+   parameters.push('--zip', '--check-tax-names', '--zenodo-token', '/metabDB_web/bcdatabaser/.zenodo_token', '--sequence-length-filter', '100:2000', '--sequences-per-taxon', '3')
+   if(taxaFile){
+     fs.writeFile(tmpdir+'/species_list.txt', taxaFile.data, (err) => { 
+      if (err){
+        done(null, {error: 'Error! There was a problem with the taxa file you uploaded.'+err.message});
+        return; 
+      }
+      parameters.push('--taxa-list', 'species_list.txt')
+      spawn_process(parameters, tmpdir, done);
+     });
+   } else {
+     spawn_process(parameters, tmpdir, done);
+   }
+});
+
+function spawn_process(parameters, tmpdir, done){
+   var spawn = require('child_process').spawn;
+   var process = spawn('/metabDB_web/bcdatabaser/bin/bcdatabaser.pl', parameters, {'cwd': tmpdir});
+   var result = [];
+   var error = [];
+   let zenodo_info = {};
+   process.stdin.end();
+   process.stdout.setEncoding('utf-8');
+   process.stdout.on('data', function (data) {
+     result.push(data)
    });
-   // var result = [];
-   // var error = [];
-   // process.stdout.setEncoding('utf-8');
-   // process.stdout.on('data', function (data) {
-   //   result.push(data);
-   // });
-   // process.stderr.setEncoding('utf-8');
-   // process.stderr.on('data', function (data) {
-   //   error.push(data)
-   // })
-   // process.on('close', function(code){
-   //   done(null,{data: result.join("\n"), error: error.join("\n")})
-   // })
-});
-
-//setup socket connection
-io.on('connection', function(socket){
-  console.log('made socket connection', socket.id)
-  socket.on('execute', function(data){
-    //add parameters to the queue
-    metadbQueue.add({data}).then(function(job){
-      job.finished().then(function(result){
-        if(!(result.error.length > 0)){
-          socket.emit('logs', {data: result.data})
-        } else {
-          socket.emit('err-logs', {data: result.error})
-        }
-    }).catch(logError)
-    }).catch(logError);
-
-    metadbQueue.on('failed', function(job, err){
-      socket.emit('err-logs', err)
-    })
-
-  })
-});
+   process.stderr.setEncoding('utf-8');
+   process.stderr.on('data', function (data) {
+     let zenodo_pos = data.indexOf('zenodo_');
+     if(zenodo_pos !== -1){
+       zenodo_lines = data.split("\n");
+       for(zline of zenodo_lines){
+         if(zline.indexOf("zenodo_") !== 0){
+           continue;
+         }
+         let parts = zline.split(": ");
+         zenodo_info[parts[0]] = parts[1];
+       }
+     }
+     error.push(data)
+   })
+   process.on('close', function(code){
+     done(null,{data: result.join("\n"), error: error.join("\n"), zenodo_info: zenodo_info})
+   })
+}
 
 function logError(error){console.error(error)}
 
@@ -77,6 +100,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'node_modules')));
 

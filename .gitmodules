@@ -1,3 +1,3 @@
 [submodule "metabDB"]
-	path = metabDB
-	url = https://github.com/molbiodiv/metabDB.git
+	path = bcdatabaser
+	url = https://github.com/molbiodiv/bcdatabaser.git

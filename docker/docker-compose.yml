@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: node_modules/.bin/nodemon -w . -e twig js
+    command: node_modules/.bin/nodemon -w . -e twig,js
     volumes:
       - ..:/metabDB_web
     working_dir: /metabDB_web
