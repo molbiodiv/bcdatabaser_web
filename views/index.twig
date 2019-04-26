@@ -12,9 +12,15 @@
       </p>
       <p>
         This web interface exposes a subset of the parameters of the <a href="https://github.com/molbiodiv/bcdatabaser">command line version</a>.
-        Also all databases build here are automatically pushed to zenodo and publicly listed.
+        All databases built here are automatically pushed to zenodo and publicly listed.
         If you want to create large numbers of databases, private databases or use more custom parameters please use the command line version instead.
-        Taxonomic range and taxa list are per default checked against NCBI Taxonomy names and 
+        Taxonomic range and taxa list are per default checked against NCBI Taxonomy names, any unknown names will cause an error.
+        Aditionally, the sequences per taxon are limited to 3 and the sequence length range is set to 100-2000bp.
+        This corresponds to the command line parameters: <code>--sequences-per-taxon=3 --sequence-length-filter=100:2000</code>
+      </p>
+      <p>
+        Please be aware that the runtime of your job depends on the taxonomic range and the search term.
+        Due to limited computational resources only one job is executed at a time, all other jobs are queued (see table at the bottom).
       </p>
       <hr class="my-4">
       <p>Some information how to use the pipeline</p>
@@ -27,58 +33,88 @@
       </p>
     </div>
   </div>
-  <fieldset>
-    <legend>Search String</legend>
-    <div class="form-group">
-      Presets:
-      <a class="btn" id="markerSearchPresetITS2" href="#" role="button">ITS2</a>
-      <a class="btn" id="markerSearchPresetRbcL" href="#" role="button">rbcL</a><br>
-      First word will be used in output file name, so the commonly used marker abbreviation code is recommended
-      <input type="text" class="form-control" id="markerSearchString" placeholder="Search String">
-    </div>
-    <legend>Taxonomic Range</legend>
-    <div class="form-group">
-      Only child taxa of this will be considered
-      <input type="text" class="form-control" id="taxonomicRange" placeholder="Viridiplantae">
-    </div>
-    <legend>Taxa List</legend>
-    <div class="form-group">
-      plain text file, one taxon per line
-      <input type="text" class="form-control" id="taxaListDescription" placeholder="US-CA">
-      <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
-    </div>
-    <legend>Output name</legend>
-    <div class="form-group">
-      Recommended Format: marker.taxonomicRange.countryCode.date
-      TODO: build from input, show preview
-      <input type="text" class="form-control" id="outdir" placeholder="its2.viridiplantae.de.2019-04-01">
-    </div>
-  </fieldset>
-  <div class="row" style="margin-top: 20px;">
-    <button type="button" class="btn btn-primary btn-lg" >Execute</button>
-  </div>
-
-  <div class="alert alert-success" role="alert" id="your_job_notification" style="display:none">
+ 
+  <div class="alert alert-success alert-dismissible" role="alert" id="your_job_notification" style="display:none">
     <h4 class="alert-heading">Well done!</h4>
-    <p>Your job was submitted successfully. It will be processed as soon as possible. Please check back later, it will appear in the results table below.</p>
+    <p>Your job was submitted successfully. It will be processed as soon as possible. Please check back later, it will appear in the results table.</p>
     <hr>
-    <p class="mb-0">To check on the status and to see possible error messages if it does not show up in the results table soon. Your job id is: <a id="your_job" href="#">XYZ</a></p>
+    <p class="mb-0">
+      To check on the status and to see possible error messages if it does not show up in the results table soon. Your job id is: <a id="your_job" href="#">XYZ</a>
+      You can find it in the job table below.
+    </p><p class="mb-0">
+      To download your results click on the doi badge.
+      This will lead you to zenodo where the archive with results is stored permanently.
+      The files therein can directly be used for classification with usearch (utax/sintax), or BLAST as the full lineage is contained within the fasta header.
+    </p>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
 
-  <div class="row" id="prevResultPanel" style="margin-top: 20px;">
-    <h4 style="text-align: center; padding-top: 5px; color: #ffffff">Previous Results</h4>
-    <table class="table table-hover" id="prevResults">
-      <thead>
-        <tr>
-          <th>Time</th>
-          <th>Name</th>
-          <th>Marker</th>
-          <th>Taxon</th>
-          <th>doi</th>
-          <th>Details</th>
-        </tr>
-      </thead>
-    </table>
+  <div class="row">
+    <div class="col-6">
+      <h4 style="text-align: center; padding-top: 5px; color: #ffffff">New Search</h4>
+      <fieldset>
+        <legend>Search String</legend>
+        <div class="form-group">
+          Presets:
+          <a class="btn" id="markerSearchPresetITS2" href="#" role="button">ITS2</a>
+          <a class="btn" id="markerSearchPresetRbcL" href="#" role="button">rbcL</a><br>
+          First word will be used in output file name, so the commonly used marker abbreviation code is recommended
+          <input type="text" class="form-control" id="markerSearchString" placeholder="Search String">
+        </div>
+        <legend>Taxonomic Range</legend>
+        <div class="form-group">
+          Only child taxa of this will be considered (case sensitive)
+          <input type="text" class="form-control" id="taxonomicRange" placeholder="Viridiplantae">
+        </div>
+        <legend>Taxa List</legend>
+        <div class="form-group">
+          plain text file, one taxon per line, please give a concise meaningful description
+          <input type="text" class="form-control" id="taxaListDescription" placeholder="US-CA">
+          <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
+        </div>
+        <legend>Output name</legend>
+        <div class="form-group">
+          Automatically constructed from your search parameters
+          <input type="text" class="form-control" id="outdir" style="color:#ffffff" disabled>
+        </div>
+      </fieldset>
+      <div class="row" style="margin-top: 20px;">
+        <button type="button" class="btn btn-primary btn-lg" id="executeJobButton">Execute</button>
+      </div>
+    </div>
+  
+    <div class="col-6" id="prevResultPanel">
+      <h4 style="text-align: center; padding-top: 5px; color: #ffffff">Previous Results</h4>
+      <table class="table table-hover" id="prevResults">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Name</th>
+            <th>doi</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+  <hr />
+  <div class="row" style="margin-top:50px">
+    <h4 style="text-align: center; padding-top: 5px; color: #ffffff">All Jobs</h4>
+    <!-- <button type="button" class="btn btn-primary" id="toggleAllJobsPanelButton" >Toggle</button> -->
+    <div class="col-12" id="allJobsPanel">
+      <table class="table table-hover" id="allJobs">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
   </div>
 </div>
 {% endblock %}
