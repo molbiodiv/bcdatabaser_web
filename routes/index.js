@@ -32,6 +32,31 @@ router.get('/queue', function(req, res, next) {
     });
 });
 
+router.get('/all_jobs', function(req, res, next) {
+  let metadbQueue = req.app.locals.metadbQueue;
+  let job_status = function(processedOn, finishedOn, returnvalue){
+    if(!processedOn){
+      return "queued";
+    }
+    if(!finishedOn){
+      return "running";
+    }
+    return (returnvalue !== null && "zenodo_info" in returnvalue && "zenodo_doi" in returnvalue.zenodo_info ? "success" : "fail")
+  }
+  metadbQueue.getJobs(['waiting','active','completed']).then(
+    (result) => {
+      final_results = result.map(
+        x => {return {
+          'time': x.timestamp,
+          'name': x.data.data.parameters['outdir'] || 'null',
+          'id': x.id,
+          'status': job_status(x.processedOn, x.finishedOn, x.returnvalue)
+        }}
+      )
+      res.json({data: final_results});
+    });
+});
+
 router.post('/process', function(req, res, next) {
   let metadbQueue = req.app.locals.metadbQueue;
   console.log(req.body)
