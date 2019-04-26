@@ -1,0 +1,15 @@
+version: '3'
+services:
+  web:
+    image: iimog/bcdatabaser_web
+    ports:
+      - "3000:3000"
+
+  redis:
+    image: redis
+    expose:
+      - 6379
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
