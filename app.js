@@ -44,7 +44,7 @@ metadbQueue.process(function(job, done){
    if('taxonomic-range' in userParameters){
      parameters.push('--taxonomic-range', userParameters['taxonomic-range']);
    }
-   parameters.push('--zip', '--check-tax-names', '--zenodo-token', '/metabDB_web/bcdatabaser/.zenodo_token', '--sequence-length-filter', '100:2000', '--sequences-per-taxon', '3')
+   parameters.push('--zip', '--check-tax-names', '--zenodo-token', '/bcdatabaser/bcdatabaser/.zenodo_token', '--sequence-length-filter', '100:2000', '--sequences-per-taxon', '3')
    if(taxaFile){
      fs.writeFile(tmpdir+'/species_list.txt', taxaFile.data, (err) => { 
       if (err){
@@ -61,7 +61,7 @@ metadbQueue.process(function(job, done){
 
 function spawn_process(parameters, tmpdir, done){
    var spawn = require('child_process').spawn;
-   var process = spawn('/metabDB_web/bcdatabaser/bin/bcdatabaser.pl', parameters, {'cwd': tmpdir});
+   var process = spawn('/bcdatabaser/bcdatabaser/bin/bcdatabaser.pl', parameters, {'cwd': tmpdir});
    var result = [];
    var error = [];
    let zenodo_info = {};
