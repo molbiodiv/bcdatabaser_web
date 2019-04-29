@@ -4,6 +4,8 @@ services:
     image: iimog/bcdatabaser_web
     ports:
       - "3000:3000"
+    links:
+      - redis
 
   redis:
     image: redis
