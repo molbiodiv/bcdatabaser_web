@@ -4,6 +4,11 @@
 }
 .btn {
   margin-bottom: 20px;
+  color: white;
+}
+
+.table {
+  color: white;
 }
 
 #messages {
