@@ -13,6 +13,6 @@ COPY . /bcdatabaser
 RUN cd /bcdatabaser && npm install
 
 WORKDIR /bcdatabaser
-ENTRYPOINT /bin/bash
+ENTRYPOINT []
 EXPOSE 3000
 CMD ["npm", "start"]
