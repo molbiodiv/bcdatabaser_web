@@ -6,6 +6,8 @@ services:
       - "3000:3000"
     links:
       - redis
+    volumes:
+      - ./.zenodo_token:/bcdatabaser/bcdatabaser/.zenodo_token
 
   redis:
     image: redis
