@@ -65,6 +65,7 @@ function spawn_process(parameters, tmpdir, done){
    var result = [];
    var error = [];
    let zenodo_info = {};
+   let stat_info = {};
    process.stdin.end();
    process.stdout.setEncoding('utf-8');
    process.stdout.on('data', function (data) {
@@ -83,10 +84,21 @@ function spawn_process(parameters, tmpdir, done){
          zenodo_info[parts[0]] = parts[1];
        }
      }
+     let stat_pos = data.indexOf('STAT\t');
+     if(stat_pos !== -1){
+       stat_lines = data.split("\n");
+       for(sline of stat_lines){
+         if(sline.indexOf("STAT\t") === -1){
+           continue;
+         }
+         let parts = sline.split("\t");
+         stat_info[parts[1]] = parts[2];
+       }
+     }
      error.push(data)
    })
    process.on('close', function(code){
-     done(null,{data: result.join("\n"), error: error.join("\n"), zenodo_info: zenodo_info})
+     done(null,{data: result.join("\n"), error: error.join("\n"), zenodo_info: zenodo_info, stat_info: stat_info})
    })
 }
 

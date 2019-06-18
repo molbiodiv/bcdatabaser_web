@@ -122,8 +122,8 @@ $(function() {
         "visible": false
       },
       { "data": "name" },
-      //{ "data": "marker" },
-      //{ "data": "range" },
+      { "data": "num_seqs" },
+      { "data": "num_taxa" },
       {
         "data": "zenodo_badge",
         "render": (data,type,row,meta) => {
