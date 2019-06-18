@@ -38,17 +38,18 @@ router.get('/queue', function(req, res, next) {
     });
 });
 
+let job_status = function(processedOn, finishedOn, returnvalue){
+  if(!processedOn){
+    return "queued";
+  }
+  if(!finishedOn){
+    return "running";
+  }
+  return (returnvalue !== null && "zenodo_info" in returnvalue && "zenodo_doi" in returnvalue.zenodo_info ? "success" : "fail")
+}
+
 router.get('/all_jobs', function(req, res, next) {
   let metadbQueue = req.app.locals.metadbQueue;
-  let job_status = function(processedOn, finishedOn, returnvalue){
-    if(!processedOn){
-      return "queued";
-    }
-    if(!finishedOn){
-      return "running";
-    }
-    return (returnvalue !== null && "zenodo_info" in returnvalue && "zenodo_doi" in returnvalue.zenodo_info ? "success" : "fail")
-  }
   metadbQueue.getJobs(['waiting','active','completed']).then(
     (result) => {
       final_results = result.map(
@@ -76,6 +77,25 @@ router.get('/job_details', function(req, res, next) {
   metadbQueue.getJob(req.param("id")).then(
     (result) => {
       res.json({data: result});
+    });
+});
+
+router.get('/details/:id', function(req, res, next) {
+  let metadbQueue = req.app.locals.metadbQueue;
+  let status_color_map = {
+    "running": "blue",
+    "queued": "yellow",
+    "success": "brightgreen",
+    "fail": "red"
+  }
+  metadbQueue.getJob(req.params.id).then(
+    (result) => {
+      status = job_status(result.processedOn, result.finishedOn, result.returnvalue)
+      res.render('details', {
+        stdout: result.returnvalue.error,
+        status: status,
+        status_color: status_color_map[status]
+      });
     });
 });
 
