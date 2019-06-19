@@ -90,11 +90,29 @@ router.get('/details/:id', function(req, res, next) {
   }
   metadbQueue.getJob(req.params.id).then(
     (result) => {
-      status = job_status(result.processedOn, result.finishedOn, result.returnvalue)
+      let num_seqs = "NA"
+      let num_taxa = "NA"
+      let zenodo_info = {zenodo_doi: "NA"}
+      let taxaFile = {}
+      let status = job_status(result.processedOn, result.finishedOn, result.returnvalue)
+      if(status === "success"){
+        num_seqs = result.returnvalue.stat_info.number_of_sequences
+        num_taxa = result.returnvalue.stat_info.number_of_taxa
+        zenodo_info = result.returnvalue.zenodo_info
+      }
+      if(result.data.data.taxaFile){
+        taxaFile = result.data.data.taxaFile
+      }
       res.render('details', {
         stdout: result.returnvalue.error,
         status: status,
-        status_color: status_color_map[status]
+        status_color: status_color_map[status],
+        parameters: result.data.data.parameters,
+        time: new Date(result.timestamp).toISOString(),
+        num_seqs: num_seqs,
+        num_taxa, num_taxa,
+        zenodo_info: zenodo_info,
+        taxaFile: taxaFile,
       });
     });
 });

@@ -26,7 +26,7 @@ $(function() {
   }
 
   function jobSubmissionSuccessful(data){
-    $('#your_job').attr('href', 'job_details?id='+data.id).text(data.id);
+    $('#your_job').attr('href', 'details/'+data.id).text(data.id);
     $('#your_job_notification').show();
     prevResultsTable.ajax.reload();
     allJobsTable.ajax.reload();
@@ -135,7 +135,7 @@ $(function() {
       },
       {
         "data": "id",
-        "render": (data,type,row,meta) => $('<a>').attr('href', 'job_details?id='+data).text("Details").get(0).outerHTML
+        "render": (data,type,row,meta) => $('<a>').attr('href', 'details/'+data).text("Details").get(0).outerHTML
       }
     ],
     order: [[ 0, "desc" ]],
@@ -172,7 +172,7 @@ $(function() {
       },
       {
         "data": "id",
-        "render": (data,type,row,meta) => $('<a>').attr('href', 'job_details?id='+data).text("Details").get(0).outerHTML
+        "render": (data,type,row,meta) => $('<a>').attr('href', 'details/'+data).text("Details").get(0).outerHTML
       }
     ],
     order: [[ 0, "desc" ]]
