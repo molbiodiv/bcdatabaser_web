@@ -8,11 +8,14 @@ var exec = require('child_process').exec;
 var Queue = require('bull');
 var tmp = require('tmp');
 const fs = require('fs');
+var favicon = require('serve-favicon');
+
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+app.use(favicon(__dirname + '/public/img/favicon.ico'));
 //define process queue
 var metadbQueue = new Queue('execute pipeline', {
   redis: {
