@@ -47,7 +47,7 @@ metadbQueue.process(function(job, done){
    if('taxonomic-range' in userParameters){
      parameters.push('--taxonomic-range', userParameters['taxonomic-range']);
    }
-   parameters.push('--zip', '--check-tax-names', '--zenodo-token', '/bcdatabaser/bcdatabaser/.zenodo_token', '--sequence-length-filter', '100:2000', '--sequences-per-taxon', '3')
+   parameters.push('--zip', '--check-tax-names', '--zenodo-token', '/bcdatabaser/bcdatabaser/.zenodo_token', '--sequence-length-filter', '100:2000', '--sequences-per-taxon', '9')
    if(taxaFile){
      fs.writeFile(tmpdir+'/species_list.txt', taxaFile.data, (err) => { 
       if (err){

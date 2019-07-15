@@ -4,7 +4,8 @@
 <div class="container">
   <div class="row" style="margin-top: 50px;">
     <div class="jumbotron">
-      <h1 class="display-3">BCdatabaser</h1>
+      <img src="/img/logo.svg" width="150px" style="float:right"/>
+      <h1 class="display-3">BCdatabaser <span style="font-size:50%">v1.0.0</span></h1>
       <p class="lead">
         The Reference DB Creator - BCdatabaser - is a pipeline to create reference databases for arbitrary
         markers and taxonomic groups from NCBI data. It can optionally be used to trim and orient the sequences
@@ -15,8 +16,8 @@
         All databases built here are automatically pushed to zenodo and publicly listed.
         If you want to create large numbers of databases, private databases or use more custom parameters please use the command line version instead.
         Taxonomic range and taxa list are per default checked against NCBI Taxonomy names, any unknown names will cause an error.
-        Aditionally, the sequences per taxon are limited to 3 and the sequence length range is set to 100-2000bp.
-        This corresponds to the command line parameters: <code>--sequences-per-taxon=3 --sequence-length-filter=100:2000</code>
+        Aditionally, the sequences per taxon are limited to 9 and the sequence length range is set to 100-2000bp.
+        This corresponds to the command line parameters: <code>--check-tax-names --sequences-per-taxon=9 --sequence-length-filter=100:2000</code>
       </p>
       <p>
         Please be aware that the runtime of your job depends on the taxonomic range and the search term.
@@ -34,14 +35,14 @@
     </div>
   </div>
  
-  <div class="alert alert-info" role="alert" id="beta_notification">
+  <div class="alert alert-primary" role="alert" id="beta_notification">
     <h4 class="alert-heading">Info!</h4>
     <p>This webservice was recently switched from beta to production.</p>
     <hr>
     <p class="mb-0">
       This means that all datasets created are submitted to zenodo and archived permanently.
       If you want to try things out first or if you are looking for datasets created in the beta phase:
-      we provide access to <a href="beta.bcdatabaser.molecular.eco">that instance</a> for a limited time.
+      we provide access to <a href="https://beta.bcdatabaser.molecular.eco">that instance</a> for a limited time.
       Data in the sandbox can be purged anytime as well and only non-permanent dummy dois will be used.
     </p>
   </div>
