@@ -71,8 +71,17 @@
         <legend>Search String</legend>
         <div class="form-group">
           Presets:
-          <a class="btn" id="markerSearchPresetITS2" href="#" style="color:#DF691A" role="button">ITS2</a>
-          <a class="btn" id="markerSearchPresetRbcL" href="#" style="color:#DF691A" role="button">rbcL</a><br>
+          <div class="row">
+            <div class="col-2">
+              <a class="btn" id="markerSearchPresetITS2" href="#" style="color:#DF691A" role="button">ITS2</a>
+            </div>
+            <div class="col-2">
+              <a class="btn" id="markerSearchPresetRbcL" href="#" style="color:#DF691A" role="button">rbcL</a><br>
+            </div>
+            <div class="col-2">
+              <a class="btn" id="markerSearchPresetCOI" href="#" style="color:#DF691A" role="button">COI</a><br>
+            </div>
+          </div>
           First word will be used in output file name, so the commonly used marker abbreviation code is recommended
           <input type="text" class="form-control" id="markerSearchString" placeholder="Search String">
         </div>
