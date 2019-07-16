@@ -114,7 +114,7 @@ $(function() {
     return false;
   })
   $('#markerSearchPresetCOI').on('click', function(){
-    $('#markerSearchString').val("'COI' OR 'CO1' OR 'Cytochrome oxidase 1' OR 'Cytochrome oxidase I'");
+    $('#markerSearchString').val("COI OR CO1 OR 'Cytochrome oxidase 1' OR 'Cytochrome oxidase I'");
     $('#markerSearchString').change();
     return false;
   })
