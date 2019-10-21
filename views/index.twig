@@ -37,6 +37,9 @@
       <p id="queue_status" style="display:none">
         There are currently <b id="running_jobs">x</b> jobs running and <b id="pending_jobs">y</b> pending.
       </p>
+      {% if user.name is defined %}
+      <p>Logged in as: {{ user.name }} - {{ user.orcid }} </p>
+      {% endif %}
     </div>
   </div>
  

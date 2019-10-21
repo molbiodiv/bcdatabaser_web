@@ -26,6 +26,22 @@ router.get('/orcid', (req, res) => {
   }));
 });
 
+router.get('/logout', (req, res) => {
+  req.session.destroy(() => res.redirect("/"));
+});
+
+
+router.get('/whoami', function(req, res, next) {
+  if(req.session.token){
+    res.json({
+      name: req.session.token.name,
+      orcid: req.session.token.orcid
+    });
+  } else {
+    res.json(null);
+  }
+});
+
 // Callback service parsing the authorization token and asking for the access token
 router.get('/callback', async (req, res) => {
   const { code } = req.query;
@@ -37,10 +53,11 @@ router.get('/callback', async (req, res) => {
     const result = await oauth2.authorizationCode.getToken(options);
 
     console.log('The resulting token: ', result);
+    req.session.token = result;
 
     const token = oauth2.accessToken.create(result);
 
-    return res.status(200).json({message: "success"});
+    return res.redirect("/");
     //return res.status(200).json(token);
   } catch (error) {
     console.error('Access Token Error', error.message);

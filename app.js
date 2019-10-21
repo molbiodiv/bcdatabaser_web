@@ -1,3 +1,4 @@
+require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -9,13 +10,25 @@ var Queue = require('bull');
 var tmp = require('tmp');
 const fs = require('fs');
 var favicon = require('serve-favicon');
-
+const redis = require('redis')
+const session = require('express-session')
+let RedisStore = require('connect-redis')(session)
+let redisClient = redis.createClient(6379, "redis")
+ 
 
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
 var usersRouter = require('./routes/users');
 
 var app = express();
+app.use(
+  session({
+    store: new RedisStore({ client: redisClient }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true
+  })
+)
 app.use(favicon(__dirname + '/public/img/favicon.ico'));
 //define process queue
 var metadbQueue = new Queue('execute pipeline', {

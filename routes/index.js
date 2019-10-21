@@ -3,7 +3,12 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'BCdatabaser' });
+  user = {};
+  if(req.session.token){
+    user.name = req.session.token.name;
+    user.orcid = req.session.token.orcid;
+  }
+  res.render('index', { title: 'BCdatabaser', user: user });
 });
 
 router.get('/job_counts', function(req, res, next) {
