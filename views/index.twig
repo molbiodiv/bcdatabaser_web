@@ -37,9 +37,6 @@
       <p id="queue_status" style="display:none">
         There are currently <b id="running_jobs">x</b> jobs running and <b id="pending_jobs">y</b> pending.
       </p>
-      {% if user.name is defined %}
-      <p>Logged in as: {{ user.name }} - {{ user.orcid }} </p>
-      {% endif %}
     </div>
   </div>
  
@@ -74,6 +71,7 @@
 
   <div class="row">
     <div class="col-6">
+      {% if user.name is defined %}
       <h4 style="text-align: center; padding-top: 5px; color: #ffffff">New Search</h4>
       <fieldset>
         <legend>Search String</legend>
@@ -109,10 +107,22 @@
           Automatically constructed from your search parameters
           <input type="text" class="form-control" id="outdir" style="color:#ffffff" disabled>
         </div>
+        <legend>Submitter</legend>
+        <div class="form-group">
+          Your name and orcid will be used as author of the dataset that will be deposited at zenodo
+          <input type="text" class="form-control" id="submitter" style="color:#ffffff" disabled value="{{ user.name }} - {{ user.orcid }}">
+          <a type="button" class="btn btn-primary" id="logoutButton" href="/auth/logout">Logout</a>
+        </div>
       </fieldset>
       <div class="row" style="margin-top: 20px;">
         <button type="button" class="btn btn-primary btn-lg" id="executeJobButton">Execute</button>
       </div>
+      {% else %}
+        <a href="/auth/orcid" id="login-orcid-button" type="button" class="btn btn-primary btn-lg">
+          <img alt="ORCID logo" id="orcid-id-logo" src="https://orcid.org/sites/default/files/images/orcid_24x24.png" width="24" height="24">
+          Login with your ORCID iD
+        </a>
+      {% endif %}
     </div>
   
     <div class="col-6" id="prevResultPanel">
