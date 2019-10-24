@@ -70,11 +70,16 @@ router.get('/all_jobs', function(req, res, next) {
 });
 
 router.post('/process', function(req, res, next) {
-  let metadbQueue = req.app.locals.metadbQueue;
-  console.log(req.body)
-  metadbQueue.add({data: req.body}).then(function(job){
-    res.json({id: job.id});
-  });
+  if(req.session.token){
+    let user = {name: req.session.token.name,  orcid: req.session.token.orcid};
+    let metadbQueue = req.app.locals.metadbQueue;
+    console.log(req.body)
+    metadbQueue.add({data: req.body, user: user}).then(function(job){
+      res.json({id: job.id});
+    });
+  } else {
+    res.json({error: "No user logged in!"})
+  }
 });
 
 router.get('/job_details', function(req, res, next) {

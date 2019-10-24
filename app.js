@@ -44,6 +44,7 @@ metadbQueue.process(function(job, done){
    let tmpdir = tmp.dirSync().name;
    let userParameters = job.data.data.parameters;
    let taxaFile = job.data.data.taxaFile;
+   let user = job.data.user;
    if(!('outdir' in userParameters)){
      done(null, {error: 'Error! No outdir string provided'});
      return;
@@ -61,7 +62,20 @@ metadbQueue.process(function(job, done){
    if('taxonomic-range' in userParameters){
      parameters.push('--taxonomic-range', userParameters['taxonomic-range']);
    }
-   parameters.push('--zip', '--check-tax-names', '--zenodo-token', '/bcdatabaser/bcdatabaser/.zenodo_token', '--sequence-length-filter', '100:2000', '--sequences-per-taxon', '9')
+   parameters.push(
+     '--zip',
+     '--check-tax-names',
+     '--zenodo-token',
+     '/bcdatabaser/bcdatabaser/.zenodo_token',
+     '--zenodo-author-name',
+     user.name,
+     '--zenodo-author-orcid',
+     user.orcid,
+     '--sequence-length-filter',
+     '100:2000',
+     '--sequences-per-taxon',
+     '9'
+   );
    if(taxaFile){
      fs.writeFile(tmpdir+'/species_list.txt', taxaFile.data, (err) => { 
       if (err){
