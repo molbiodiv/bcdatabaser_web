@@ -2,23 +2,8 @@ require('dotenv').config();
 var express = require('express');
 var router = express.Router();
 
-// Set the configuration settings for oauth
-const credentials = {
-  client: {
-    id: process.env.ORCID_ID,
-    secret: process.env.ORCID_SECRET,
-  },
-  auth: {
-    tokenHost: 'https://orcid.org',
-    tokenPath: '/oauth/token',
-    authorizePath: '/oauth/authorize'
-  }
-};
-
-// Initialize the OAuth2 Library
-const oauth2 = require('simple-oauth2').create(credentials);
-
 router.get('/orcid', (req, res) => {
+  const oauth2 = req.app.locals.oauth2;
   res.redirect(oauth2.authorizationCode.authorizeURL({
     redirect_uri: 'http://localhost:3000/auth/callback',
     scope: '/authenticate',
@@ -44,6 +29,7 @@ router.get('/whoami', function(req, res, next) {
 
 // Callback service parsing the authorization token and asking for the access token
 router.get('/callback', async (req, res) => {
+  const oauth2 = req.app.locals.oauth2;
   const { code } = req.query;
   const options = {
     code,

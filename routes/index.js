@@ -1,13 +1,34 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  user = {};
-  if(req.session.token){
-    user.name = req.session.token.name;
-    user.orcid = req.session.token.orcid;
+const getUserFromSession = async function(session, oauth2){
+  let user = {};
+  if(session.token){
+    // check that token is still valid or renew
+    const accessToken = oauth2.accessToken.create(session.token);
+    if (accessToken.expired()) {
+      try {
+        const params = {
+          scope: '/authenticate',
+        };
+     
+        accessToken = await accessToken.refresh(params);
+      } catch (error) {
+        console.log('Error refreshing access token: ', error.message);
+        session.destroy();
+        return user;
+      }
+    }
+    user.name = session.token.name;
+    user.orcid = session.token.orcid;
   }
+  return user;
+}
+
+/* GET home page. */
+router.get('/', async function(req, res, next) {
+  const oauth2 = req.app.locals.oauth2;
+  let user = await getUserFromSession(req.session, oauth2);
   res.render('index', { title: 'BCdatabaser', user: user });
 });
 
@@ -69,9 +90,10 @@ router.get('/all_jobs', function(req, res, next) {
     });
 });
 
-router.post('/process', function(req, res, next) {
-  if(req.session.token){
-    let user = {name: req.session.token.name,  orcid: req.session.token.orcid};
+router.post('/process', async function(req, res, next) {
+  const oauth2 = req.app.locals.oauth2;
+  let user = await getUserFromSession(req.session, oauth2);
+  if(user.name){
     let metadbQueue = req.app.locals.metadbQueue;
     console.log(req.body)
     metadbQueue.add({data: req.body, user: user}).then(function(job){

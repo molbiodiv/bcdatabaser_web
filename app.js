@@ -15,6 +15,22 @@ const session = require('express-session')
 let RedisStore = require('connect-redis')(session)
 let redisClient = redis.createClient(6379, "redis")
  
+// Set the configuration settings for oauth
+const credentials = {
+  client: {
+    id: process.env.ORCID_ID,
+    secret: process.env.ORCID_SECRET,
+  },
+  auth: {
+    tokenHost: 'https://orcid.org',
+    tokenPath: '/oauth/token',
+    authorizePath: '/oauth/authorize'
+  }
+};
+
+// Initialize the OAuth2 Library
+const oauth2 = require('simple-oauth2').create(credentials);
+
 
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
@@ -37,6 +53,8 @@ var metadbQueue = new Queue('execute pipeline', {
     port: 6379
   }
 });
+// make oauth available in routers
+app.locals.oauth2 = oauth2;
 // make queue available in routers
 app.locals.metadbQueue = metadbQueue;
 metadbQueue.process(function(job, done){
