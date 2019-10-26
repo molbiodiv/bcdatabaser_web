@@ -52,6 +52,8 @@ $(function() {
     }
     if(taxonomicRange.length > 0){
       params['taxonomic-range'] = taxonomicRange;
+    } else {
+      params['taxonomic-range'] = 'root';
     }
     if(taxaListFiles.length > 0){
       var taxaListFile = taxaListFiles[0];
