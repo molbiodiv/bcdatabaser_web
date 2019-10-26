@@ -18,6 +18,7 @@ Also a file `.env` is required for OAuth via ORCiD with content like this:
 ```
 ORCID_ID='YOUR-ID'
 ORCID_SECRET='YOUR-KEY'
+SESSION_SECRET='SOME-SECRET-STRING'
 ```
 
 We recommend adding the following two entries to your host `crontab` to clean old job data every day and update the local NCBI Taxonomy dump once a week (see [issue #15](https://github.com/molbiodiv/bcdatabaser/issues/15)).
@@ -34,5 +35,6 @@ Adjust the path to your folder containing the `docker_compose.yml` and the desir
 This software is licensed under [MIT](./LICENSE). Be aware that the libraries and external programs are licensed separately (possibly under different licenses).
 
 ## Changes
+ - Next release: Add orcid authentication
  - 1.0.0 <2019-07-15> Initial stable release
 
