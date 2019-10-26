@@ -140,6 +140,7 @@ router.get('/details/:id', function(req, res, next) {
         status: status,
         status_color: status_color_map[status],
         parameters: result.data.data.parameters,
+        user: result.data.user,
         time: new Date(result.timestamp).toISOString(),
         num_seqs: num_seqs,
         num_taxa, num_taxa,
