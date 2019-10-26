@@ -53,6 +53,9 @@ metadbQueue.process(function(job, done){
      done(null, {error: 'Error! Illegal character in output name: "/"'});
      return;
    }
+   if(userParameters['warn-failed-tax-names']){
+     parameters.push('--warn-failed-tax-names');
+   }
    parameters.push('--outdir', userParameters['outdir']);
    if(!('marker-search-string' in userParameters)){
      done(null, {error: 'Error! No marker search string provided'});

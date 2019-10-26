@@ -43,6 +43,7 @@ $(function() {
     var outdir = $('#outdir').val();
     var taxonomicRange = $('#taxonomicRange').val();
     var taxaListFiles = $('#exampleInputFile')[0].files;
+    params['warn-failed-tax-names'] = document.getElementById('warnFailedTaxNames').checked;
     if(markerSearchString.length > 0){
       params['marker-search-string'] = markerSearchString;
     }
