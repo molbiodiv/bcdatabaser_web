@@ -7,7 +7,7 @@ router.get('/orcid', (req, res) => {
   res.redirect(oauth2.authorizationCode.authorizeURL({
     redirect_uri: 'https://bcdatabaser.molecular.eco/auth/callback',
     scope: '/authenticate',
-    state: '3(dsf#0/!~',
+    state: process.env.OAUTH_STATE,
   }));
 });
 

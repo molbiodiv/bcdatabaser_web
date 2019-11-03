@@ -18,6 +18,7 @@ Also a file `.env` is required for OAuth via ORCiD with content like this:
 ```
 ORCID_ID='YOUR-ID'
 ORCID_SECRET='YOUR-KEY'
+OAUTH_STATE='SOME-SECRET-STRING'
 SESSION_SECRET='SOME-SECRET-STRING'
 ```
 
