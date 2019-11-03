@@ -36,6 +36,6 @@ Adjust the path to your folder containing the `docker_compose.yml` and the desir
 This software is licensed under [MIT](./LICENSE). Be aware that the libraries and external programs are licensed separately (possibly under different licenses).
 
 ## Changes
- - Next release: Add orcid authentication
+ - 1.1.0 <2019-11-03> Add orcid authentication
  - 1.0.0 <2019-07-15> Initial stable release
 
