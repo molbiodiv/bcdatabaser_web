@@ -43,6 +43,7 @@ $(function() {
     var outdir = $('#outdir').val();
     var taxonomicRange = $('#taxonomicRange').val();
     var taxaListFiles = $('#exampleInputFile')[0].files;
+    params['warn-failed-tax-names'] = document.getElementById('warnFailedTaxNames').checked;
     if(markerSearchString.length > 0){
       params['marker-search-string'] = markerSearchString;
     }
@@ -51,6 +52,8 @@ $(function() {
     }
     if(taxonomicRange.length > 0){
       params['taxonomic-range'] = taxonomicRange;
+    } else {
+      params['taxonomic-range'] = 'root';
     }
     if(taxaListFiles.length > 0){
       var taxaListFile = taxaListFiles[0];

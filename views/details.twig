@@ -21,6 +21,16 @@
           <th>Name</th>
           <td>{{parameters.outdir}}</td>
         </tr>
+        {% if user %}
+        <tr>
+          <th>Creator</th>
+          <td>
+            <a href="https://orcid.org/{{user.orcid}}"><img class="inline-orcid" src="/img/orcid.png"></a>
+            &nbsp;
+            {{user.name}}
+          </td>
+        </tr>
+        {% endif %}
         <tr>
           <th>Marker Search String</th>
           <td>{{parameters['marker-search-string']}}</td>

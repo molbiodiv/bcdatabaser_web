@@ -1,3 +1,4 @@
+require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -9,12 +10,41 @@ var Queue = require('bull');
 var tmp = require('tmp');
 const fs = require('fs');
 var favicon = require('serve-favicon');
+const redis = require('redis')
+const session = require('express-session')
+let RedisStore = require('connect-redis')(session)
+let redisClient = redis.createClient(6379, "redis")
+ 
+// Set the configuration settings for oauth
+const credentials = {
+  client: {
+    id: process.env.ORCID_ID,
+    secret: process.env.ORCID_SECRET,
+  },
+  auth: {
+    tokenHost: 'https://orcid.org',
+    tokenPath: '/oauth/token',
+    authorizePath: '/oauth/authorize'
+  }
+};
+
+// Initialize the OAuth2 Library
+const oauth2 = require('simple-oauth2').create(credentials);
 
 
 var indexRouter = require('./routes/index');
+var authRouter = require('./routes/auth');
 var usersRouter = require('./routes/users');
 
 var app = express();
+app.use(
+  session({
+    store: new RedisStore({ client: redisClient }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true
+  })
+)
 app.use(favicon(__dirname + '/public/img/favicon.ico'));
 //define process queue
 var metadbQueue = new Queue('execute pipeline', {
@@ -23,6 +53,8 @@ var metadbQueue = new Queue('execute pipeline', {
     port: 6379
   }
 });
+// make oauth available in routers
+app.locals.oauth2 = oauth2;
 // make queue available in routers
 app.locals.metadbQueue = metadbQueue;
 metadbQueue.process(function(job, done){
@@ -30,6 +62,7 @@ metadbQueue.process(function(job, done){
    let tmpdir = tmp.dirSync().name;
    let userParameters = job.data.data.parameters;
    let taxaFile = job.data.data.taxaFile;
+   let user = job.data.user;
    if(!('outdir' in userParameters)){
      done(null, {error: 'Error! No outdir string provided'});
      return;
@@ -37,6 +70,9 @@ metadbQueue.process(function(job, done){
    if(userParameters['outdir'].indexOf('/') !== -1){
      done(null, {error: 'Error! Illegal character in output name: "/"'});
      return;
+   }
+   if(userParameters['warn-failed-tax-names']){
+     parameters.push('--warn-failed-tax-names');
    }
    parameters.push('--outdir', userParameters['outdir']);
    if(!('marker-search-string' in userParameters)){
@@ -47,7 +83,20 @@ metadbQueue.process(function(job, done){
    if('taxonomic-range' in userParameters){
      parameters.push('--taxonomic-range', userParameters['taxonomic-range']);
    }
-   parameters.push('--zip', '--check-tax-names', '--zenodo-token', '/bcdatabaser/bcdatabaser/.zenodo_token', '--sequence-length-filter', '100:2000', '--sequences-per-taxon', '9')
+   parameters.push(
+     '--zip',
+     '--check-tax-names',
+     '--zenodo-token',
+     '/bcdatabaser/bcdatabaser/.zenodo_token',
+     '--zenodo-author-name',
+     user.name,
+     '--zenodo-author-orcid',
+     user.orcid,
+     '--sequence-length-filter',
+     '100:2000',
+     '--sequences-per-taxon',
+     '9'
+   );
    if(taxaFile){
      fs.writeFile(tmpdir+'/species_list.txt', taxaFile.data, (err) => { 
       if (err){
@@ -121,6 +170,7 @@ app.use(express.static(path.join(__dirname, 'node_modules')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/auth', authRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

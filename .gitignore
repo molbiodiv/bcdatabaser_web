@@ -3,3 +3,4 @@ package-lock.json
 .idea
 docker-compose.yml.local
 redis_data
+.env

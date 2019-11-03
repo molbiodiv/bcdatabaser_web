@@ -13,6 +13,14 @@ Thanks a lot Mirza!
 Feel free to host your own instance of the BCdatabaser web server.
 To do so use the `docker-compose.yml` included in this repository.
 Don't forget to deposit a file `.zenodo_token` with your zenodo token.
+Also a file `.env` is required for OAuth via ORCiD with content like this:
+
+```
+ORCID_ID='YOUR-ID'
+ORCID_SECRET='YOUR-KEY'
+OAUTH_STATE='SOME-SECRET-STRING'
+SESSION_SECRET='SOME-SECRET-STRING'
+```
 
 We recommend adding the following two entries to your host `crontab` to clean old job data every day and update the local NCBI Taxonomy dump once a week (see [issue #15](https://github.com/molbiodiv/bcdatabaser/issues/15)).
 Adjust the path to your folder containing the `docker_compose.yml` and the desired time and frequency of execution to your needs.
@@ -28,5 +36,6 @@ Adjust the path to your folder containing the `docker_compose.yml` and the desir
 This software is licensed under [MIT](./LICENSE). Be aware that the libraries and external programs are licensed separately (possibly under different licenses).
 
 ## Changes
+ - 1.1.0 <2019-11-03> Add orcid authentication
  - 1.0.0 <2019-07-15> Initial stable release
 
