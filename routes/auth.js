@@ -5,7 +5,7 @@ var router = express.Router();
 router.get('/orcid', (req, res) => {
   const oauth2 = req.app.locals.oauth2;
   res.redirect(oauth2.authorizationCode.authorizeURL({
-    redirect_uri: 'http://localhost:3000/auth/callback',
+    redirect_uri: 'https://bcdatabaser.molecular.eco/auth/callback',
     scope: '/authenticate',
     state: '3(dsf#0/!~',
   }));
