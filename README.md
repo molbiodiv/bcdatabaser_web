@@ -2,6 +2,7 @@
 
 Web interface for the [BCdatabaser](https://github.com/molbiodiv/bcdatabaser) pipeline.
 Public instance hosted at: https://bcdatabaser.molecular.eco
+Documentation: https://molbiodiv.github.io/bcdatabaser/
 
 ## Logo
 The current logo is designed by [@mirzazulfan](https://github.com/mirzazulfan).
