@@ -37,12 +37,14 @@ var authRouter = require('./routes/auth');
 var usersRouter = require('./routes/users');
 
 var app = express();
+app.set('trust proxy', 1);
 app.use(
   session({
     store: new RedisStore({ client: redisClient }),
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: { secure: true }
   })
 )
 app.use(favicon(__dirname + '/public/img/favicon.ico'));
